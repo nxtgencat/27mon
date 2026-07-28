@@ -1,4 +1,4 @@
-import { X } from 'lucide-react'
+import { RotateCcw } from 'lucide-react'
 
 interface FiltersProps {
   categories: string[]
@@ -7,6 +7,7 @@ interface FiltersProps {
   selectedBrand: string
   onCategoryChange: (cat: string) => void
   onBrandChange: (brand: string) => void
+  onCloseMobile?: () => void
 }
 
 export default function Filters({
@@ -16,43 +17,49 @@ export default function Filters({
   selectedBrand,
   onCategoryChange,
   onBrandChange,
+  onCloseMobile,
 }: FiltersProps) {
   const hasFilters = selectedCategory || selectedBrand
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <p className="mini-tag">FILTERS</p>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between pb-3 border-b border-line dark:border-linedark">
+        <span className="mini-tag">FILTERS & CATEGORIES</span>
         {hasFilters && (
           <button
             onClick={() => { onCategoryChange(''); onBrandChange('') }}
-            className="text-xs text-cobalt hover:text-cobalt-dark flex items-center gap-1"
+            type="button"
+            className="text-xs text-cobalt dark:text-cobalt-light hover:underline flex items-center gap-1 font-medium"
           >
-            <X className="w-3 h-3" /> Clear all
+            <RotateCcw className="w-3 h-3" /> Reset
           </button>
         )}
       </div>
 
       <div>
-        <p className="text-xs font-medium mb-2 text-slate dark:text-slatedark">Category</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate dark:text-slatedark mb-2.5">
+          Categories
+        </p>
         <div className="space-y-1">
           <button
-            onClick={() => onCategoryChange('')}
-            className={`w-full text-left px-3 py-1.5 rounded-md text-sm transition-colors ${
+            onClick={() => { onCategoryChange(''); if (onCloseMobile) onCloseMobile() }}
+            type="button"
+            className={`w-full text-left px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
               !selectedCategory
-                ? 'bg-ink/10 dark:bg-white/10 font-medium'
+                ? 'bg-ink dark:bg-paperdark text-paper dark:text-inkdark'
                 : 'text-slate dark:text-slatedark hover:bg-ink/5 dark:hover:bg-white/5'
             }`}
           >
-            All
+            All Categories
           </button>
           {categories.map((cat) => (
             <button
               key={cat}
-              onClick={() => onCategoryChange(cat)}
-              className={`w-full text-left px-3 py-1.5 rounded-md text-sm capitalize transition-colors ${
+              onClick={() => { onCategoryChange(cat); if (onCloseMobile) onCloseMobile() }}
+              type="button"
+              className={`w-full text-left px-3 py-2 rounded-lg text-xs sm:text-sm capitalize transition-colors ${
                 selectedCategory === cat
-                  ? 'bg-ink/10 dark:bg-white/10 font-medium'
+                  ? 'bg-ink dark:bg-paperdark text-paper dark:text-inkdark font-medium'
                   : 'text-slate dark:text-slatedark hover:bg-ink/5 dark:hover:bg-white/5'
               }`}
             >
@@ -63,25 +70,29 @@ export default function Filters({
       </div>
 
       <div>
-        <p className="text-xs font-medium mb-2 text-slate dark:text-slatedark">Brand</p>
-        <div className="space-y-1 max-h-48 overflow-y-auto">
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate dark:text-slatedark mb-2.5">
+          Brands
+        </p>
+        <div className="space-y-1 max-h-56 overflow-y-auto pr-1">
           <button
-            onClick={() => onBrandChange('')}
-            className={`w-full text-left px-3 py-1.5 rounded-md text-sm transition-colors ${
+            onClick={() => { onBrandChange(''); if (onCloseMobile) onCloseMobile() }}
+            type="button"
+            className={`w-full text-left px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
               !selectedBrand
-                ? 'bg-ink/10 dark:bg-white/10 font-medium'
+                ? 'bg-ink dark:bg-paperdark text-paper dark:text-inkdark'
                 : 'text-slate dark:text-slatedark hover:bg-ink/5 dark:hover:bg-white/5'
             }`}
           >
-            All
+            All Brands
           </button>
           {brands.map((brand) => (
             <button
               key={brand}
-              onClick={() => onBrandChange(brand)}
-              className={`w-full text-left px-3 py-1.5 rounded-md text-sm transition-colors ${
+              onClick={() => { onBrandChange(brand); if (onCloseMobile) onCloseMobile() }}
+              type="button"
+              className={`w-full text-left px-3 py-2 rounded-lg text-xs sm:text-sm transition-colors ${
                 selectedBrand === brand
-                  ? 'bg-ink/10 dark:bg-white/10 font-medium'
+                  ? 'bg-ink dark:bg-paperdark text-paper dark:text-inkdark font-medium'
                   : 'text-slate dark:text-slatedark hover:bg-ink/5 dark:hover:bg-white/5'
               }`}
             >

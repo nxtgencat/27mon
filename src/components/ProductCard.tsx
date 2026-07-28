@@ -1,67 +1,105 @@
 import { Link } from 'react-router-dom'
-import { Heart } from 'lucide-react'
+import { Heart, Pencil, Trash2, Star } from 'lucide-react'
 import type { Product } from '../types'
 import { useWishlist } from '../context/WishlistContext'
 
 interface ProductCardProps {
   product: Product
+  onEdit?: (p: Product) => void
+  onDelete?: (p: Product) => void
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, onEdit, onDelete }: ProductCardProps) {
   const { isInWishlist, toggleWishlist } = useWishlist()
   const liked = isInWishlist(product.id)
 
   return (
-    <div className="card group relative">
-      <button
-        onClick={(e) => { e.preventDefault(); toggleWishlist(product.id) }}
-        className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-surface/80 dark:bg-surfacedark/80 backdrop-blur-sm grid place-content-center hover:scale-110 transition-transform"
-      >
-        <Heart
-          className={`w-4 h-4 ${liked ? 'fill-rose text-rose' : 'text-slate'}`}
-        />
-      </button>
+    <div className="card p-4 sm:p-5 hover:shadow-md hover:-translate-y-1 transition-all duration-300 group relative border border-line/40 dark:border-linedark/40 flex flex-col justify-between">
+      {/* Quick Action Overlay Buttons */}
+      <div className="absolute top-3.5 right-3.5 z-10 flex items-center gap-1.5">
+        {onEdit && (
+          <button
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onEdit(product) }}
+            type="button"
+            title="Edit product"
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full glass shadow-xs grid place-content-center hover:scale-110 active:scale-95 transition-transform opacity-100 sm:opacity-0 group-hover:opacity-100 text-slate dark:text-slatedark hover:text-ink dark:hover:text-paperdark"
+          >
+            <Pencil className="w-3.5 h-3.5" />
+          </button>
+        )}
+        {onDelete && (
+          <button
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDelete(product) }}
+            type="button"
+            title="Delete product"
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full glass shadow-xs grid place-content-center hover:scale-110 active:scale-95 transition-transform text-rose opacity-100 sm:opacity-0 group-hover:opacity-100"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+        )}
+        <button
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist(product.id) }}
+          type="button"
+          title={liked ? 'Remove from wishlist' : 'Add to wishlist'}
+          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full glass shadow-xs grid place-content-center hover:scale-110 active:scale-95 transition-transform"
+        >
+          <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${liked ? 'fill-rose text-rose' : 'text-slate dark:text-slatedark'}`} />
+        </button>
+      </div>
 
-      <Link to={`/product/${product.id}`} className="block">
-        <div className="aspect-square rounded-lg overflow-hidden bg-ink/5 dark:bg-white/5 mb-4">
+      <Link to={`/product/${product.id}`} className="block flex-1 flex flex-col">
+        <div className="aspect-square rounded-lg overflow-hidden bg-ink/5 dark:bg-white/5 mb-3.5 relative">
           <img
             src={product.thumbnail}
             alt={product.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
           />
-        </div>
-
-        <p className="mini-tag mb-1">{product.brand || product.category}</p>
-        <h3 className="font-display font-semibold text-sm truncate">{product.title}</h3>
-
-        <div className="flex items-center justify-between mt-2">
-          <span className="font-semibold text-sm">${product.price.toFixed(2)}</span>
-          <div className="flex items-center gap-1">
-            <svg className="w-3 h-3 text-amber fill-amber" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-            </svg>
-            <span className="text-xs text-slate dark:text-slatedark">
-              {product.rating.toFixed(1)}
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 mt-2">
-          {product.stock > 0 ? (
-            <span className="px-2 py-0.5 rounded-full bg-mint/15 text-mint text-[10px] font-medium">
-              In stock ({product.stock})
-            </span>
-          ) : (
-            <span className="px-2 py-0.5 rounded-full bg-rose/15 text-rose text-[10px] font-medium">
-              Out of stock
-            </span>
-          )}
           {product.discountPercentage > 0 && (
-            <span className="px-2 py-0.5 rounded-full bg-amber/15 text-amber text-[10px] font-medium">
+            <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-amber text-white text-[10px] font-mono font-semibold tracking-wider shadow-xs">
               -{Math.round(product.discountPercentage)}%
             </span>
           )}
+        </div>
+
+        <div className="flex-1 flex flex-col justify-between">
+          <div>
+            <span className="mini-tag block mb-1 uppercase truncate">
+              {product.brand || product.category.replace('-', ' ')}
+            </span>
+            <h3 className="font-display font-semibold text-xs sm:text-sm text-ink dark:text-paperdark line-clamp-2 leading-snug">
+              {product.title}
+            </h3>
+          </div>
+
+          <div className="mt-3 pt-3 border-t border-line/50 dark:border-linedark/50">
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <span className="font-display font-bold text-sm sm:text-base text-ink dark:text-paperdark">
+                ${product.price.toFixed(2)}
+              </span>
+              <div className="flex items-center gap-1">
+                <Star className="w-3.5 h-3.5 fill-amber text-amber shrink-0" />
+                <span className="font-mono text-xs text-slate dark:text-slatedark font-medium">
+                  {product.rating.toFixed(1)}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between text-[10px] font-medium">
+              {product.stock > 0 ? (
+                <span className="px-2 py-0.5 rounded-full bg-mint/15 text-mint">
+                  In stock ({product.stock})
+                </span>
+              ) : (
+                <span className="px-2 py-0.5 rounded-full bg-rose/15 text-rose">
+                  Out of stock
+                </span>
+              )}
+              <span className="font-mono text-slate/70 dark:text-slatedark/70 text-[9px]">
+                SKU-{product.id.toString().padStart(4, '0')}
+              </span>
+            </div>
+          </div>
         </div>
       </Link>
     </div>

@@ -28,3 +28,12 @@ export interface Review {
   reviewerName: string
   reviewerEmail: string
 }
+
+export interface ProductFormData {
+  title: string
+  description: string
+  price: number
+  category: string
+  brand: string
+  stock: number
+}

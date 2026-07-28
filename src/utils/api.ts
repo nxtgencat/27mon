@@ -1,4 +1,4 @@
-import type { Product } from '../types'
+import type { Product, ProductFormData } from '../types'
 
 const BASE_URL = 'https://dummyjson.com'
 
@@ -16,8 +16,29 @@ export async function fetchProducts(): Promise<Product[]> {
   return data.products
 }
 
-export async function fetchProduct(id: number): Promise<Product> {
-  const res = await fetch(`${BASE_URL}/products/${id}`)
-  if (!res.ok) throw new Error(`Failed to fetch product (${res.status})`)
+export async function createProduct(data: ProductFormData): Promise<Product> {
+  const res = await fetch(`${BASE_URL}/products/add`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) throw new Error(`Failed to create product (${res.status})`)
   return res.json()
+}
+
+export async function updateProduct(id: number, data: Partial<ProductFormData>): Promise<Product> {
+  const res = await fetch(`${BASE_URL}/products/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) throw new Error(`Failed to update product (${res.status})`)
+  return res.json()
+}
+
+export async function deleteProduct(id: number): Promise<void> {
+  const res = await fetch(`${BASE_URL}/products/${id}`, {
+    method: 'DELETE',
+  })
+  if (!res.ok) throw new Error(`Failed to delete product (${res.status})`)
 }

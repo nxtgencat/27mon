@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { ArrowUpDown, ChevronDown, Check } from 'lucide-react'
 
-type SortKey = 'price-asc' | 'price-desc' | 'rating-desc' | 'rating-asc' | 'name-asc' | 'name-desc'
+export type SortKey = 'price-asc' | 'price-desc' | 'rating-desc' | 'rating-asc' | 'name-asc' | 'name-desc'
 
 const OPTIONS: { value: SortKey; label: string }[] = [
   { value: 'name-asc', label: 'Name A-Z' },
@@ -34,27 +34,36 @@ export default function SortSelect({ value, onChange }: SortSelectProps) {
   const current = OPTIONS.find((o) => o.value === value)
 
   return (
-    <div className="relative" ref={rootRef}>
+    <div className="relative inline-block text-left" ref={rootRef}>
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg border border-line dark:border-linedark bg-surface dark:bg-surfacedark text-sm hover:border-ink dark:hover:border-paperdark transition-colors"
+        type="button"
+        className="flex items-center gap-2 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-lg border border-line dark:border-linedark bg-surface dark:bg-surfacedark text-xs sm:text-sm font-medium hover:border-ink dark:hover:border-paperdark transition-colors"
       >
-        <ArrowUpDown className="w-4 h-4 text-slate dark:text-slatedark shrink-0" />
-        <span className="hidden sm:inline">{current?.label}</span>
-        <ChevronDown className="w-3.5 h-3.5 text-slate dark:text-slatedark" />
+        <ArrowUpDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate dark:text-slatedark shrink-0" />
+        <span className="truncate max-w-[130px] sm:max-w-none">{current?.label || 'Sort by'}</span>
+        <ChevronDown className={`w-3.5 h-3.5 text-slate dark:text-slatedark transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
 
       {open && (
-        <div className="absolute top-full right-0 mt-2 p-1.5 rounded-xl bg-surface dark:bg-surfacedark shadow-lg border border-line dark:border-linedark z-40 w-48">
+        <div className="panel right-0 left-auto w-52 p-1.5 animate-fadeUp">
+          <div className="px-2 py-1 mb-1">
+            <span className="mini-tag">SORT BY</span>
+          </div>
           {OPTIONS.map((opt) => (
             <button
               key={opt.value}
               onClick={() => { onChange(opt.value); setOpen(false) }}
-              className="w-full text-left px-2.5 py-1.5 rounded-md hover:bg-ink/5 dark:hover:bg-white/5 text-sm flex items-center justify-between gap-2"
+              type="button"
+              className={`menu-item justify-between ${
+                value === opt.value
+                  ? 'bg-ink/10 dark:bg-white/10 font-medium'
+                  : 'text-slate dark:text-slatedark'
+              }`}
             >
               <span>{opt.label}</span>
               {value === opt.value && (
-                <Check className="w-3.5 h-3.5 text-cobalt shrink-0" />
+                <Check className="w-3.5 h-3.5 text-cobalt dark:text-cobalt-light shrink-0" />
               )}
             </button>
           ))}
